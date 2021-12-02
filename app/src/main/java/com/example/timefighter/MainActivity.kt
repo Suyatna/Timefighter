@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         // increment score logic
         score++
 
-        val newScore = "Your Score: $score"
+        val newScore = getString(R.string.your_score, score)
         gameScoreTextView.text = newScore
     }
 
