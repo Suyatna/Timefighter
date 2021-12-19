@@ -10,7 +10,7 @@ import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = MainActivity::class.java.simpleName
+    private val tag = MainActivity::class.java.simpleName
 
     private lateinit var gameScoreTextView: TextView
     private lateinit var timeLeftTextView: TextView
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d(TAG, "onCreate called. Score is: $score")
+        Log.d(tag, "onCreate called. Score is: $score")
 
         // connect views to variable
         gameScoreTextView = findViewById(R.id.game_score_text_view)
