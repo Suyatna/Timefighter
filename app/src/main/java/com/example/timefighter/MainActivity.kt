@@ -1,14 +1,19 @@
 package com.example.timefighter
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val SCORE_KEY = "SCORE KEY"
+        private const val TIME_LEFT_KEY = "TIME_LEFT_KEY"
+    }
 
     private val tag = MainActivity::class.java.simpleName
 
@@ -27,7 +32,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d(tag, "onCreate called. Score is: $score")
 
         // connect views to variable
         gameScoreTextView = findViewById(R.id.game_score_text_view)
@@ -39,7 +43,55 @@ class MainActivity : AppCompatActivity() {
         // listener from variables
         tapMeButton.setOnClickListener { incrementStore() }
 
-        resetGame()
+        if (savedInstanceState != null) {
+            score = savedInstanceState.getInt(SCORE_KEY)
+            timeLeft = savedInstanceState.getInt(TIME_LEFT_KEY)
+            restoreGame()
+        } else {
+            resetGame()
+        }
+
+        Log.d(tag, "onCreate called. Score is: $score")
+    }
+
+    private fun restoreGame() {
+        val restoredScore = getString(R.string.your_score, score)
+        gameScoreTextView.text = restoredScore
+
+        val restoredTime = getString(R.string.time_left, timeLeft)
+        timeLeftTextView.text = restoredTime
+
+        countDownTimer = object : CountDownTimer((timeLeft * 1000).toLong(), countDownInterval) {
+            override fun onTick(millisUntilFinished: Long) {
+                timeLeft = millisUntilFinished.toInt() / 1000
+
+                val timeLeftString = getString(R.string.time_left, timeLeft)
+                timeLeftTextView.text = timeLeftString
+            }
+
+            override fun onFinish() {
+                endGame()
+            }
+        }
+
+        countDownTimer.start()
+        gameStarted = true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putInt(SCORE_KEY, score)
+        outState.putInt(TIME_LEFT_KEY, timeLeft)
+        countDownTimer.cancel()
+
+        Log.d(tag, "onSaveInstanceState: Saving Score: $score & Time Left: $timeLeft")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Log.d(tag, "onDestroy called.")
     }
 
     private fun incrementStore() {
