@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         countDownTimer.start()
-        gameStarted = true
+        // gameStarted = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -116,6 +116,8 @@ class MainActivity : AppCompatActivity() {
         val initialTimeLeft = getString(R.string.time_left, 60)
         timeLeftTextView.text = initialTimeLeft
 
+        if (gameStarted) timeLeft = 60
+
         countDownTimer = object : CountDownTimer(initialCountDown, countDownInterval) {
             override fun onTick(millisUntilFinished: Long) {
                 timeLeft = millisUntilFinished.toInt() / 1000
@@ -141,6 +143,7 @@ class MainActivity : AppCompatActivity() {
     private fun endGame() {
         // end game logic
         Toast.makeText(this, getString(R.string.game_over_message, score), Toast.LENGTH_LONG).show()
+
         resetGame()
     }
 }
