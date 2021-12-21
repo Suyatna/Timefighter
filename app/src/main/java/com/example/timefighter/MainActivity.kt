@@ -3,6 +3,7 @@ package com.example.timefighter
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -41,7 +42,11 @@ class MainActivity : AppCompatActivity() {
         tapMeButton = findViewById(R.id.tap_me_button)
 
         // listener from variables
-        tapMeButton.setOnClickListener { incrementStore() }
+        tapMeButton.setOnClickListener { view ->
+            val bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce)
+            view.startAnimation(bounceAnimation)
+            incrementStore()
+        }
 
         if (savedInstanceState != null) {
             score = savedInstanceState.getInt(SCORE_KEY)
