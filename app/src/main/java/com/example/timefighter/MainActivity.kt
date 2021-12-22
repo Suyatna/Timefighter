@@ -16,7 +16,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val SCORE_KEY = "SCORE KEY"
-        private const val TIME_LEFT_KEY = "TIME_LEFT_KEY"
+        private const val TIME_LEFT_KEY = "TIME LEFT KEY"
+        private const val IS_GAME_START = "IS GAME START"
     }
 
     private val tag = MainActivity::class.java.simpleName
@@ -54,12 +55,11 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState != null) {
             score = savedInstanceState.getInt(SCORE_KEY)
             timeLeft = savedInstanceState.getInt(TIME_LEFT_KEY)
+            gameStarted = savedInstanceState.getBoolean(IS_GAME_START)
             restoreGame()
         } else {
             resetGame()
         }
-
-        Log.d(tag, "onCreate called. Score is: $score")
     }
 
     private fun restoreGame() {
@@ -82,8 +82,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        countDownTimer.start()
-        // gameStarted = true
+        // when phone rotate and "tap me" was clicked, check if game is started
+        if (gameStarted) countDownTimer.start()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -91,9 +91,8 @@ class MainActivity : AppCompatActivity() {
 
         outState.putInt(SCORE_KEY, score)
         outState.putInt(TIME_LEFT_KEY, timeLeft)
+        outState.putBoolean(IS_GAME_START, gameStarted)
         countDownTimer.cancel()
-
-        Log.d(tag, "onSaveInstanceState: Saving Score: $score & Time Left: $timeLeft")
     }
 
     override fun onDestroy() {
@@ -148,6 +147,7 @@ class MainActivity : AppCompatActivity() {
         val initialTimeLeft = getString(R.string.time_left, 60)
         timeLeftTextView.text = initialTimeLeft
 
+        // if timer is reached 0 (phone has rotate), give time back to 60
         if (gameStarted) timeLeft = 60
 
         countDownTimer = object : CountDownTimer(initialCountDown, countDownInterval) {
@@ -175,7 +175,6 @@ class MainActivity : AppCompatActivity() {
     private fun endGame() {
         // end game logic
         Toast.makeText(this, getString(R.string.game_over_message, score), Toast.LENGTH_LONG).show()
-
         resetGame()
     }
 }
